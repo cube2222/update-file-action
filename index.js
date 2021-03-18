@@ -12,7 +12,7 @@ async function run() {
   try {
     const {data: file} = await octokit.repos.getContent({
       owner: 'cube2222',
-      repo: 'testing-spacelift',
+      repo: 'octosql',
       path: targetFilePath,
     });
     sha = file.sha
