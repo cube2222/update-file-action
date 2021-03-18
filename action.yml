@@ -1,12 +1,30 @@
-name: 'Hello World'
-description: 'Greet someone and record the time'
+name: 'Create/Update/Delete Filea'
+description: 'Manipulates a file in the target repository.'
 inputs:
   github-token:
-    description: 'GitHub access token.'
+    description: 'GitHub access token with access to the target repository.'
+    required: true
+  owner:
+    description: 'Owner of the target repository.'
+    required: true
+  repository:
+    description: 'Name of the target repository.'
     required: true
   target-file-path:
-    description: 'File path in target repository.'
+    description: 'Path of file to update in the target repository.'
     required: true
+  commit-message:
+    description: 'Commit message to use.'
+    required: true
+    default: 'Automated workflow commit.'
+  content:
+    description: 'New content for the file. Used when creating or updating.'
+    required: true
+    default: ''
+  delete:
+    description: 'Whether the file should be deleted.'
+    required: true
+    default: 'false'
 runs:
   using: 'node12'
   main: 'index.js'
