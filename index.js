@@ -1,15 +1,24 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = core.getInput('who-to-greet');
-  console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-} catch (error) {
-  core.setFailed(error.message);
+async function run() {
+  try {
+    // `who-to-greet` input defined in action metadata file
+    const githubToken = core.getInput('github-token');
+    const octokit = github.getOctokit(githubToken)
+    const targetFilePath = core.getInput('target-file-path');
+
+    console.log(`Hello ${targetFilePath}!`);
+
+    const {data: file} = await octokit.repos.getContent({
+      owner: 'cube2222',
+      repo: 'octosql',
+      path: targetFilePath,
+    });
+    console.log(file)
+  } catch (error) {
+    core.setFailed(error.message);
+  }
 }
+
+run();
