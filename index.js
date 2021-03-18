@@ -2,23 +2,26 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 async function run() {
+  const githubToken = core.getInput('github-token');
+  const octokit = github.getOctokit(githubToken);
+  const targetFilePath = core.getInput('target-file-path');
+  const content = core.getInput('content');
+
+  let sha = null;
   try {
-    // `who-to-greet` input defined in action metadata file
-    const githubToken = core.getInput('github-token');
-    const octokit = github.getOctokit(githubToken)
-    const targetFilePath = core.getInput('target-file-path');
-
-    console.log(`Hello ${targetFilePath}!`);
-
     const {data: file} = await octokit.repos.getContent({
       owner: 'cube2222',
-      repo: 'octosql',
+      repo: 'testing-spacelift',
       path: targetFilePath,
     });
-    console.log(file)
+    sha = file.sha
   } catch (error) {
+    if (error.message === "Not Found") {
+      console.log("didn't find the file")
+    }
     core.setFailed(error.message);
   }
+  console.log(`found sha: ${sha}`);
 }
 
 run();
