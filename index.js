@@ -6,6 +6,7 @@ async function run() {
   const octokit = github.getOctokit(githubToken);
   const targetFilePath = core.getInput('target-file-path');
   const content = core.getInput('content');
+  const shouldDelete = core.getInput('delete') === "true";
 
   let sha = null;
   try {
@@ -16,10 +17,12 @@ async function run() {
     });
     sha = file.sha
   } catch (error) {
-    if (error.message === "Not Found") {
-      console.log("didn't find the file")
+    // When deleting, we need the file to exist.
+    // Otherwise, the SHA isn't required.
+    if (error.message !== "Not Found" || shouldDelete) {
+      core.setFailed(error.message);
+      return;
     }
-    core.setFailed(error.message);
   }
   console.log(`found sha: ${sha}`);
 }
