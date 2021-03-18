@@ -40,13 +40,14 @@ async function run() {
         sha: sha,
       });
     } else {
+      let contentBuffer = Buffer.from(content);
       if (sha == null) {
         await octokit.repos.createOrUpdateFileContents({
           owner: owner,
           repo: repository,
           path: targetFilePath,
           message: message,
-          content: content,
+          content: contentBuffer.toString('base64'),
         });
       } else {
         await octokit.repos.createOrUpdateFileContents({
@@ -54,7 +55,7 @@ async function run() {
           repo: repository,
           path: targetFilePath,
           message: message,
-          content: content,
+          content: contentBuffer.toString('base64'),
           sha: sha,
         });
       }
